@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Claude Code Execution Bot - Adaptive Cards Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Adaptive Cards CSS -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .teams-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        .chat-message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .user-message {
+            background: #e3f2fd;
+            text-align: right;
+        }
+        
+        .bot-message {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #5b5fc7;
+            text-align: center;
+        }
+        
+        .demo-controls {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        button {
+            background: #5b5fc7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #4a4fb8;
+        }
+        
+        #card-container {
+            min-height: 200px;
+        }
+    </style>
+    
+    <!-- Adaptive Cards JS -->
+    <script src="https://unpkg.com/adaptivecards/dist/adaptivecards.min.js"></script>
+    <script src="https://unpkg.com/markdown-it/dist/markdown-it.min.js"></script>
+</head>
+<body>
+    <div class="teams-container">
+        <h1>🤖 Claude Code Execution Bot - Teams UI Demo</h1>
+        
+        <div class="demo-controls">
+            <button onclick="showWelcomeCard()">Welcome Card</button>
+            <button onclick="showHelpCard()">Help Card</button>
+            <button onclick="showSimpleResponse()">Simple Response</button>
+            <button onclick="showCodeExecutionReport()">Code Execution Report</button>
+            <button onclick="showErrorReport()">Error Report</button>
+            <button onclick="showFilesList()">Files List</button>
+        </div>
+        
+        <div id="card-container"></div>
+    </div>
+    
+    <script>
+        // Initialize Adaptive Cards
+        var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+        adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
+            fontFamily: "Segoe UI, Helvetica Neue, sans-serif",
+            spacing: {
+                small: 4,
+                default: 8,
+                medium: 16,
+                large: 24,
+                extraLarge: 32,
+                padding: 12
+            },
+            separator: {
+                lineThickness: 1,
+                lineColor: "#EEEEEE"
+            },
+            containerStyles: {
+                default: {
+                    backgroundColor: "#FFFFFF",
+                    foregroundColors: {
+                        default: {
+                            default: "#333333",
+                            subtle: "#666666"
+                        },
+                        accent: {
+                            default: "#2E89FC",
+                            subtle: "#6BADF9"
+                        },
+                        attention: {
+                            default: "#DD0000",
+                            subtle: "#E87777"
+                        },
+                        good: {
+                            default: "#028A02",
+                            subtle: "#2FA82F"
+                        }
+                    }
+                },
+                emphasis: {
+                    backgroundColor: "#F0F0F0"
+                },
+                accent: {
+                    backgroundColor: "#E3F2FD"
+                },
+                attention: {
+                    backgroundColor: "#FFE5E5"
+                }
+            }
+        });
+        
+        // Card definitions
+        const cards = {
+            welcome: {
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "🤖 Welcome to Claude Code Execution Assistant!",
+                        "size": "Large",
+                        "weight": "Bolder"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "I'm Claude, your AI assistant with advanced code execution capabilities. I can help you with:",
+                        "wrap": true,
+                        "spacing": "Medium"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "✨ **Data Analysis** - Process and visualize your data\n🐍 **Python Programming** - Write and execute code\n📊 **Report Generation** - Create formatted analysis reports\n🔍 **Research** - Search the web for current information",
+                        "wrap": true
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "Type **/help** to see available commands, or just start chatting!",
+                        "wrap": true,
+                        "spacing": "Medium"
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "Get Started",
+                        "data": {
+                            "text": "/help"
+                        }
+                    }
+                ]
+            },
+            
+            help: {
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "📚 Claude Code Execution Assistant - Help",
+                        "size": "Large",
+                        "weight": "Bolder"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "Available Commands:",
+                        "weight": "Bolder",
+                        "spacing": "Medium"
+                    },
+                    {
+                        "type": "FactSet",
+                        "facts": [
+                            {"title": "/help", "value": "Show this help message"},
+                            {"title": "/reset", "value": "Clear conversation history"},
+                            {"title": "/files", "value": "List uploaded files"},
+                            {"title": "/nocode <message>", "value": "Send message without code execution"}
+                        ]
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "Features:",
+                        "weight": "Bolder",
+                        "spacing": "Medium"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "• 🐍 **Python Code Execution** - I can write and execute Python code\n• 📊 **Data Analysis** - Process data and generate visualizations\n• 🌐 **Web Search** - Access current information from the web\n• 📎 **File Support** - Upload files for analysis\n• 📈 **Report Generation** - Formatted reports with results",
+                        "wrap": true
+                    }
+                ]
+            },
+            
+            simpleResponse: {
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Hello! I can help you analyze data, write code, or answer questions. What would you like to work on today?",
+                        "wrap": true
+                    }
+                ]
+            },
+            
+            codeExecutionReport: {
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "ColumnSet",
+                        "columns": [
+                            {
+                                "type": "Column",
+                                "width": "auto",
+                                "items": [
+                                    {
+                                        "type": "TextBlock",
+                                        "text": "TC",
+                                        "size": "Large",
+                                        "weight": "Bolder",
+                                        "color": "Accent"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "Column",
+                                "width": "stretch",
+                                "items": [
+                                    {
+                                        "type": "TextBlock",
+                                        "text": "TASMAN CONSULTING ENGINEERS",
+                                        "weight": "Bolder"
+                                    },
+                                    {
+                                        "type": "TextBlock",
+                                        "text": "CIVIL & STRUCTURAL",
+                                        "size": "Small",
+                                        "isSubtle": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "separator": true
+                    },
+                    {
+                        "type": "FactSet",
+                        "facts": [
+                            {"title": "Project:", "value": "Data Analysis"},
+                            {"title": "Description:", "value": "Create quarterly sales visualization"},
+                            {"title": "Client:", "value": "Teams User"},
+                            {"title": "Date:", "value": "2024-01-15 14:30"},
+                            {"title": "By:", "value": "Claude AI Assistant"}
+                        ],
+                        "separator": true,
+                        "spacing": "Medium"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "Analysis Results",
+                        "size": "Large",
+                        "weight": "Bolder",
+                        "spacing": "Large"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "I've successfully created a bar chart showing quarterly sales data. The visualization displays Q1 through Q4 sales figures with appropriate labels and formatting.",
+                        "wrap": true,
+                        "spacing": "Medium"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "📝 Executed Code",
+                        "weight": "Bolder",
+                        "size": "Medium",
+                        "spacing": "Large"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "import matplotlib.pyplot as plt\nimport numpy as np\n\n# Quarterly sales data\nquarters = ['Q1', 'Q2', 'Q3', 'Q4']\nsales = [120000, 135000, 155000, 142000]\n\n# Create bar chart\nplt.figure(figsize=(10, 6))\nplt.bar(quarters, sales, color=['#4CAF50', '#2196F3', '#FF9800', '#9C27B0'])\nplt.title('Quarterly Sales Report 2023', fontsize=16)\nplt.xlabel('Quarter')\nplt.ylabel('Sales ($)')\nplt.grid(axis='y', alpha=0.3)\n\n# Add value labels on bars\nfor i, v in enumerate(sales):\n    plt.text(i, v + 2000, f'${v:,}', ha='center')\n\nplt.tight_layout()\nplt.savefig('quarterly_sales.png', dpi=300)\nprint('Chart saved successfully!')",
+                        "fontType": "Monospace",
+                        "wrap": true,
+                        "size": "Small"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "💻 Output",
+                        "weight": "Bolder",
+                        "size": "Medium",
+                        "spacing": "Large"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "Chart saved successfully!",
+                        "fontType": "Monospace",
+                        "wrap": true,
+                        "size": "Small"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "📊 Generated Figures",
+                        "weight": "Bolder",
+                        "size": "Medium",
+                        "spacing": "Large"
+                    },
+                    {
+                        "type": "TextBlock",
+                        "text": "• quarterly_sales.png",
+                        "wrap": true
+                    }
+                ]
+            },
+            
+            errorReport: {
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "Container",
+                        "style": "attention",
+                        "items": [
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "auto",
+                                        "items": [{
+                                            "type": "TextBlock",
+                                            "text": "❌",
+                                            "size": "Large"
+                                        }]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "Execution Error",
+                                                "weight": "Bolder"
+                                            },
+                                            {
+                                                "type": "TextBlock",
+                                                "text": "NameError: name 'undefined_variable' is not defined",
+                                                "wrap": true,
+                                                "fontType": "Monospace"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            
+            filesList: {
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "📁 Uploaded Files",
+                        "size": "Large",
+                        "weight": "Bolder"
+                    },
+                    {
+                        "type": "Container",
+                        "items": [
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [{
+                                            "type": "TextBlock",
+                                            "text": "sales_data.csv",
+                                            "weight": "Bolder"
+                                        }]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "auto",
+                                        "items": [{
+                                            "type": "TextBlock",
+                                            "text": "CSV Data",
+                                            "color": "Accent"
+                                        }]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": "ID: file_abc123",
+                                "size": "Small",
+                                "isSubtle": true
+                            }
+                        ],
+                        "separator": true
+                    },
+                    {
+                        "type": "Container",
+                        "items": [
+                            {
+                                "type": "ColumnSet",
+                                "columns": [
+                                    {
+                                        "type": "Column",
+                                        "width": "stretch",
+                                        "items": [{
+                                            "type": "TextBlock",
+                                            "text": "report_template.pdf",
+                                            "weight": "Bolder"
+                                        }]
+                                    },
+                                    {
+                                        "type": "Column",
+                                        "width": "auto",
+                                        "items": [{
+                                            "type": "TextBlock",
+                                            "text": "PDF Document",
+                                            "color": "Accent"
+                                        }]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": "ID: file_def456",
+                                "size": "Small",
+                                "isSubtle": true
+                            }
+                        ],
+                        "separator": true
+                    }
+                ]
+            }
+        };
+        
+        function renderCard(cardData) {
+            const container = document.getElementById('card-container');
+            container.innerHTML = '';
+            
+            adaptiveCard.parse(cardData);
+            const renderedCard = adaptiveCard.render();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message bot-message';
+            messageDiv.appendChild(renderedCard);
+            
+            container.appendChild(messageDiv);
+        }
+        
+        function showWelcomeCard() {
+            renderCard(cards.welcome);
+        }
+        
+        function showHelpCard() {
+            renderCard(cards.help);
+        }
+        
+        function showSimpleResponse() {
+            renderCard(cards.simpleResponse);
+        }
+        
+        function showCodeExecutionReport() {
+            renderCard(cards.codeExecutionReport);
+        }
+        
+        function showErrorReport() {
+            renderCard(cards.errorReport);
+        }
+        
+        function showFilesList() {
+            renderCard(cards.filesList);
+        }
+        
+        // Show welcome card on load
+        window.onload = function() {
+            showWelcomeCard();
+        };
+    </script>
+</body>
+</html>

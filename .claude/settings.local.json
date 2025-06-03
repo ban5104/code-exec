@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "code_execution",
+      "mcp__puppeteer__puppeteer_screenshot",
+      "mcp__puppeteer__puppeteer_click",
+      "mcp__puppeteer__puppeteer_evaluate",
+      "mcp__gmail__Send_Email",
+      "mcp__airtable-waybenny__Email_Contacts",
+      "mcp__google-calendar-waybenny__Search_Calendar",
+      "[artifact",
+      "crawl",
+      "execute",
+      "repl]",
+      "mcp__filesystem__read_file",
+      "mcp__brave-search__brave_web_search",
+      "mcp__Context7__resolve-library-id",
+      "mcp__Context7__get-library-docs"
+    ],
+    "deny": []
+  },
+  "enabledMcpjsonServers": [
+    "brave-search",
+    "xero",
+    "Context7",
+    "supabase",
+    "puppeteer",
+    "memory",
+    "filesystem",
+    "gmail-waybenny",
+    "google-calendar-waybenny",
+    "airtable-waybenny",
+    "digitalocean"
+  ]
+}

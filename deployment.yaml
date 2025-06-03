@@ -1,0 +1,55 @@
+# Azure App Service deployment configuration
+apiVersion: 2019-08-01
+name: claude-teams-bot
+type: Microsoft.Web/sites
+location: East US
+properties:
+  serverFarmId: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/serverfarms/{app-service-plan}
+  siteConfig:
+    appSettings:
+      - name: ANTHROPIC_API_KEY
+        value: "@Microsoft.KeyVault(SecretUri=https://{vault-name}.vault.azure.net/secrets/anthropic-api-key/)"
+      - name: MicrosoftAppId
+        value: "@Microsoft.KeyVault(SecretUri=https://{vault-name}.vault.azure.net/secrets/bot-app-id/)"
+      - name: MicrosoftAppPassword
+        value: "@Microsoft.KeyVault(SecretUri=https://{vault-name}.vault.azure.net/secrets/bot-app-password/)"
+      - name: WEBSITE_NODE_DEFAULT_VERSION
+        value: "16.x"
+      - name: PYTHON_VERSION
+        value: "3.9"
+    linuxFxVersion: "PYTHON|3.9"
+    appCommandLine: "python app.py"
+    alwaysOn: true
+    cors:
+      allowedOrigins:
+        - "https://teams.microsoft.com"
+        - "https://*.teams.microsoft.com"
+    
+# Application Insights for monitoring
+---
+apiVersion: 2020-02-02
+name: claude-teams-bot-insights
+type: Microsoft.Insights/components
+location: East US
+properties:
+  Application_Type: web
+  Flow_Type: Bluefield
+  Request_Source: rest
+
+# Bot Channels Registration
+---
+apiVersion: 2021-03-01
+name: claude-code-execution-bot
+type: Microsoft.BotService/botServices
+location: global
+sku:
+  name: F0
+properties:
+  displayName: Claude Code Execution Assistant
+  endpoint: https://{app-name}.azurewebsites.net/api/messages
+  msaAppId: "{bot-app-id}"
+  channels:
+    - channelName: MsTeamsChannel
+      properties:
+        isEnabled: true
+        acceptedTerms: true

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Claude Code Execution Bot - Teams Cards Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f3f2f1;
+            color: #323130;
+        }
+        
+        .teams-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #edebe9;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .company-logo {
+            display: flex;
+            margin-right: 16px;
+        }
+        
+        .logo-tc {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0078d4;
+        }
+        
+        .logo-e {
+            font-size: 24px;
+            font-weight: bold;
+            color: #107c10;
+        }
+        
+        .company-info {
+            flex: 1;
+        }
+        
+        .company-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .company-tagline {
+            font-size: 12px;
+            color: #605e5c;
+        }
+        
+        .company-contact {
+            text-align: right;
+            font-size: 12px;
+            color: #605e5c;
+        }
+        
+        .fact-set {
+            background: #faf9f8;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .fact {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .fact:last-child {
+            margin-bottom: 0;
+        }
+        
+        .fact-title {
+            font-weight: 600;
+            min-width: 120px;
+            color: #605e5c;
+        }
+        
+        .fact-value {
+            color: #323130;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 24px 0 16px 0;
+            color: #323130;
+        }
+        
+        .text-block {
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        
+        .code-block {
+            background: #f3f2f1;
+            border: 1px solid #edebe9;
+            border-radius: 4px;
+            padding: 16px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre;
+            margin-bottom: 16px;
+        }
+        
+        .output-block {
+            background: #e1f5e1;
+            border: 1px solid #107c10;
+            border-radius: 4px;
+            padding: 16px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        
+        .error-container {
+            background: #fde7e9;
+            border: 1px solid #a80000;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .error-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .error-icon {
+            color: #a80000;
+            font-size: 24px;
+            margin-right: 12px;
+        }
+        
+        .error-title {
+            font-weight: 600;
+            color: #a80000;
+        }
+        
+        .error-text {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .sources-section {
+            border-top: 1px solid #edebe9;
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+        
+        .source-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .source-link {
+            color: #0078d4;
+            text-decoration: none;
+        }
+        
+        .source-link:hover {
+            text-decoration: underline;
+        }
+        
+        .action-button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        
+        .action-button:hover {
+            background: #106ebe;
+        }
+        
+        .welcome-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .feature-list {
+            margin: 16px 0;
+            line-height: 1.8;
+        }
+        
+        .files-container {
+            border: 1px solid #edebe9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #edebe9;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .file-type {
+            color: #0078d4;
+            font-size: 14px;
+            margin-right: 16px;
+        }
+        
+        .file-id {
+            font-size: 12px;
+            color: #605e5c;
+            display: block;
+            margin-top: 4px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #323130;
+        }
+        
+        .demo-controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="teams-container">
+        <h1>🤖 Claude Code Execution Bot - Teams UI Demo</h1>
+        
+        <div class="demo-controls">
+            <button class="action-button" onclick="showCard('welcome')">Welcome Card</button>
+            <button class="action-button" onclick="showCard('help')">Help Card</button>
+            <button class="action-button" onclick="showCard('simple')">Simple Response</button>
+            <button class="action-button" onclick="showCard('report')">Code Report</button>
+            <button class="action-button" onclick="showCard('error')">Error Report</button>
+            <button class="action-button" onclick="showCard('files')">Files List</button>
+        </div>
+        
+        <div id="card-container">
+            <!-- Cards will be inserted here -->
+        </div>
+    </div>
+    
+    <script>
+        const cards = {
+            welcome: `
+                <div class="card">
+                    <div class="welcome-icon">🤖</div>
+                    <h2>Welcome to Claude Code Execution Assistant!</h2>
+                    <p class="text-block">
+                        I'm Claude, your AI assistant with advanced code execution capabilities. I can help you with:
+                    </p>
+                    <div class="feature-list">
+                        ✨ <strong>Data Analysis</strong> - Process and visualize your data<br>
+                        🐍 <strong>Python Programming</strong> - Write and execute code<br>
+                        📊 <strong>Report Generation</strong> - Create formatted analysis reports<br>
+                        🔍 <strong>Research</strong> - Search the web for current information
+                    </div>
+                    <p class="text-block">
+                        Type <strong>/help</strong> to see available commands, or just start chatting!
+                    </p>
+                    <button class="action-button">Get Started</button>
+                </div>
+            `,
+            
+            help: `
+                <div class="card">
+                    <h2>📚 Claude Code Execution Assistant - Help</h2>
+                    <h3>Available Commands:</h3>
+                    <div class="fact-set">
+                        <div class="fact">
+                            <div class="fact-title">/help</div>
+                            <div class="fact-value">Show this help message</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">/reset</div>
+                            <div class="fact-value">Clear conversation history</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">/files</div>
+                            <div class="fact-value">List uploaded files</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">/nocode &lt;msg&gt;</div>
+                            <div class="fact-value">Send message without code execution</div>
+                        </div>
+                    </div>
+                    <h3>Features:</h3>
+                    <div class="feature-list">
+                        • 🐍 <strong>Python Code Execution</strong> - I can write and execute Python code<br>
+                        • 📊 <strong>Data Analysis</strong> - Process data and generate visualizations<br>
+                        • 🌐 <strong>Web Search</strong> - Access current information from the web<br>
+                        • 📎 <strong>File Support</strong> - Upload files for analysis<br>
+                        • 📈 <strong>Report Generation</strong> - Formatted reports with results
+                    </div>
+                </div>
+            `,
+            
+            simple: `
+                <div class="card">
+                    <p class="text-block">
+                        Hello! I can help you analyze data, write code, or answer questions. What would you like to work on today?
+                    </p>
+                </div>
+            `,
+            
+            report: `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="company-logo">
+                            <span class="logo-tc">TC</span>
+                            <span class="logo-e">E</span>
+                        </div>
+                        <div class="company-info">
+                            <div class="company-name">TASMAN CONSULTING ENGINEERS</div>
+                            <div class="company-tagline">CIVIL & STRUCTURAL</div>
+                        </div>
+                        <div class="company-contact">
+                            192a Queen St<br>
+                            PO Box 3631<br>
+                            Richmond NELSON<br>
+                            t: (03) 544 6454<br>
+                            w: www.tcel.co.nz
+                        </div>
+                    </div>
+                    
+                    <div class="fact-set">
+                        <div class="fact">
+                            <div class="fact-title">Project:</div>
+                            <div class="fact-value">Data Analysis</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">Description:</div>
+                            <div class="fact-value">Create quarterly sales visualization</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">Client:</div>
+                            <div class="fact-value">Teams User</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">Date:</div>
+                            <div class="fact-value">2024-01-15 14:30</div>
+                        </div>
+                        <div class="fact">
+                            <div class="fact-title">By:</div>
+                            <div class="fact-value">Claude AI Assistant</div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="section-title">Analysis Results</h2>
+                    <p class="text-block">
+                        I've successfully created a bar chart showing quarterly sales data. The visualization displays Q1 through Q4 sales figures with appropriate labels and formatting.
+                    </p>
+                    
+                    <h3 class="section-title">📝 Executed Code</h3>
+                    <div class="code-block">import matplotlib.pyplot as plt
+import numpy as np
+
+# Quarterly sales data
+quarters = ['Q1', 'Q2', 'Q3', 'Q4']
+sales = [120000, 135000, 155000, 142000]
+
+# Create bar chart
+plt.figure(figsize=(10, 6))
+plt.bar(quarters, sales, color=['#4CAF50', '#2196F3', '#FF9800', '#9C27B0'])
+plt.title('Quarterly Sales Report 2023', fontsize=16)
+plt.xlabel('Quarter')
+plt.ylabel('Sales ($)')
+plt.grid(axis='y', alpha=0.3)
+
+# Add value labels on bars
+for i, v in enumerate(sales):
+    plt.text(i, v + 2000, f'${v:,}', ha='center')
+
+plt.tight_layout()
+plt.savefig('quarterly_sales.png', dpi=300)
+print('Chart saved successfully!')</div>
+                    
+                    <h3 class="section-title">💻 Output</h3>
+                    <div class="output-block">Chart saved successfully!</div>
+                    
+                    <h3 class="section-title">📊 Generated Figures</h3>
+                    <p class="text-block">• quarterly_sales.png</p>
+                    
+                    <div class="sources-section">
+                        <h3 class="section-title">🌐 Sources</h3>
+                        <div class="source-item">
+                            1. <a href="https://matplotlib.org" class="source-link">Matplotlib Documentation</a> - 2024-01-01
+                        </div>
+                    </div>
+                </div>
+            `,
+            
+            error: `
+                <div class="card">
+                    <div class="error-container">
+                        <div class="error-header">
+                            <div class="error-icon">❌</div>
+                            <div>
+                                <div class="error-title">Execution Error</div>
+                            </div>
+                        </div>
+                        <div class="error-text">NameError: name 'undefined_variable' is not defined</div>
+                    </div>
+                    <p class="text-block">
+                        There was an error executing the code. The variable 'undefined_variable' was not defined before use.
+                    </p>
+                </div>
+            `,
+            
+            files: `
+                <div class="card">
+                    <h2>📁 Uploaded Files</h2>
+                    <div class="files-container">
+                        <div class="file-item">
+                            <div>
+                                <div class="file-name">sales_data.csv</div>
+                                <div class="file-id">ID: file_abc123</div>
+                            </div>
+                            <div class="file-type">CSV Data</div>
+                        </div>
+                        <div class="file-item">
+                            <div>
+                                <div class="file-name">report_template.pdf</div>
+                                <div class="file-id">ID: file_def456</div>
+                            </div>
+                            <div class="file-type">PDF Document</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+        
+        function showCard(cardType) {
+            const container = document.getElementById('card-container');
+            container.innerHTML = cards[cardType] || cards.welcome;
+        }
+        
+        // Show welcome card on load
+        window.onload = function() {
+            showCard('welcome');
+        };
+    </script>
+</body>
+</html>
